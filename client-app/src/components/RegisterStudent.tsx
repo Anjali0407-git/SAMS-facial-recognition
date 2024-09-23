@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import {
   TextField, Button, MenuItem, InputLabel, FormControl, Select,
   Typography, Box, Snackbar,
@@ -19,6 +19,7 @@ const RegisterStudent: React.FC = () => {
     courseName: '',
     universityName: '',
     image: null as File | null,
+    imageStr: ''
   });
     const [open, setOpen] = useState(false);
     type SeverityType = AlertColor | undefined;
@@ -36,17 +37,29 @@ const RegisterStudent: React.FC = () => {
     setStudent(prev => ({ ...prev, [name]: value }));
   };
 
+  // const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //     const file = event.target.files?.[0];
+  //     console.log('file', file)
+  //   if (file && file.type.startsWith('image/')) {
+  //       setStudent(prev => ({ ...prev, image: file }));
+  //       setImageFileName(file.name); 
+  //     setAlertInfo({ severity: 'success', message: 'Image uploaded successfully!' });
+  //     setOpen(true);
+  //   } else {
+  //     setAlertInfo({ severity: 'error', message: 'Please upload a valid image file.' });
+  //     setOpen(true);
+  //   }
+  // };
+
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      console.log('file', file)
-    if (file && file.type.startsWith('image/')) {
-        setStudent(prev => ({ ...prev, image: file }));
-        setImageFileName(file.name); 
-      setAlertInfo({ severity: 'success', message: 'Image uploaded successfully!' });
-      setOpen(true);
-    } else {
-      setAlertInfo({ severity: 'error', message: 'Please upload a valid image file.' });
-      setOpen(true);
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Once the file is read, set it as Base64 string to the student state
+        setStudent(prev => ({ ...prev, image: file, imageStr: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -59,17 +72,42 @@ const RegisterStudent: React.FC = () => {
     }
     setOpen(false);
     };
-    
-//   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
-//     if (reason === 'clickaway') {
-//       return;
-//     }
-//     setOpen(false);
-//   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    console.log(student);
+  
+    try {
+      console.log('preparing data to launch', student)
+      // Send the request to your backend
+      const response = await fetch('http://localhost:8000/register_student', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        // body: formData,
+        body: JSON.stringify({
+          first_name: student.firstName,
+          last_name: student.lastName,
+          banner_id: student.bannerId,
+          course_name: student.courseName,
+          university_name: student.universityName,
+          image: student.imageStr
+        }),
+      });
+  
+      // Parse JSON response
+      const result = await response.json();
+  
+      console.log(result);
+      if(response.ok) {
+        alert('Student registered successfully');
+      } else {
+        alert(result.detail);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to register student');
+    }
   };
 
     return (
