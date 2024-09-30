@@ -1,8 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import Webcam from "react-webcam";
-import { Button, Snackbar, Alert, CircularProgress } from '@mui/material';
+import { Button, Snackbar, Alert, CircularProgress, Box } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
-
 
 const videoConstraints = {
   width: 1280,
@@ -20,7 +19,6 @@ const WebcamComponent: React.FC = () => {
     if (webcamRef.current) {
       const imageSrc = webcamRef.current.getScreenshot();
       if (imageSrc) {
-        console.log(imageSrc);
         try {
           setLoading(true);
 
@@ -30,16 +28,12 @@ const WebcamComponent: React.FC = () => {
             headers: {
               'Content-Type': 'application/json'
             },
-            
-            body: JSON.stringify({
-              encoded_image: imageSrc
-            }),
+            body: JSON.stringify({ encoded_image: imageSrc }),
           });
-      
+
           // Parse JSON response
           const result = await response.json();
-      
-          console.log(result);
+
           if(response.ok) {
             setSnackbarSeverity('success');
             setSnackbarMessage(`Welcome ${result.student_name}, attendance marked successfully!`);
@@ -62,7 +56,7 @@ const WebcamComponent: React.FC = () => {
   };
 
   return (
-    <>
+    <Box textAlign="center" sx={{ mt: 2 }}>
       <Webcam
         audio={false}
         height={720}
@@ -72,27 +66,26 @@ const WebcamComponent: React.FC = () => {
         videoConstraints={videoConstraints}
       />
 
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={capture}
-        disabled={loading}
-        startIcon={loading ? <CircularProgress />: <PhotoCameraIcon />}
-      >
-        {loading ? 'Processing...' : 'Capture & Verify'}
-      </Button>
+      <Box mt={2}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={capture}
+          disabled={loading}
+          startIcon={loading ? <CircularProgress size={24} /> : <PhotoCameraIcon />}
+        >
+          {loading ? 'Processing...' : 'Capture & Verify'}
+        </Button>
+      </Box>
       
       {/* Snackbar for feedback */}
       <Snackbar open={!!snackbarMessage} autoHideDuration={8000} onClose={handleCloseSnackbar}
-        anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}>
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
         <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
           {snackbarMessage}
         </Alert>
       </Snackbar>
-    </>
+    </Box>
   );
 };
 

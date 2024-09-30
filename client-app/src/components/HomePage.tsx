@@ -1,18 +1,33 @@
-// src/features/HomePage.tsx
 import React from 'react';
-import { Link } from 'react-router-dom';
-import logo from '../logo.svg';
+import { Link as RouterLink } from 'react-router-dom';
+import { AppBar, Toolbar, Button, Typography, Container, Box } from '@mui/material';
 
 const HomePage: React.FC = () => {
   return (
-    <div>
-        <Link to="/registerstudent">
-          <button className="App-link">Register Student</button>
-      </Link>
-      <Link to="/capture">
-          <button className="App-link">Capture Image</button>
-      </Link>
-    </div>
+    <>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Home
+          </Typography>
+          <Button color="inherit" component={RouterLink} to="/registerstudent">
+            Register Student
+          </Button>
+          <Button color="inherit" component={RouterLink} to="/capture">
+            Capture Image
+          </Button>
+        </Toolbar>
+      </AppBar>
+      <Container maxWidth="sm">
+        <Box textAlign="center" mt={4}>
+          <img src='./face-recognition.png' alt="Logo" style={{ width: '400px' }} />
+          <Typography variant="h4" gutterBottom>Welcome to Smart Attendace Management System</Typography>
+          <Typography variant="body1">
+            Use the links on the Navbar to register a student or capture an image.
+          </Typography>
+        </Box>
+      </Container>
+    </>
   );
 };
 

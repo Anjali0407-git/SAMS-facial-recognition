@@ -60,18 +60,17 @@ const RegisterStudent: React.FC = () => {
         setStudent(prev => ({ ...prev, image: file, imageStr: reader.result as string }));
       };
       reader.readAsDataURL(file);
+      setAlertInfo({ severity: 'success', message: 'Image uploaded successfully!' });
+      setOpen(true);
+    } else {
+      setAlertInfo({ severity: 'error', message: 'Please upload a valid image file.' });
+      setOpen(true);
     }
   };
 
-  const handleClose = (
-    event: React.SyntheticEvent | Event,  // Make sure to include | Event to handle both React and DOM events
-    reason: string
-  ) => {
-    if (reason === 'clickaway') {
-      return;
-    }
+  const handleClose = () => {
     setOpen(false);
-    };
+  };
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -160,7 +159,7 @@ const RegisterStudent: React.FC = () => {
         </Grid>
                 
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-            <Alert onClose={() => handleClose} severity={alertInfo.severity}>
+            <Alert onClose={handleClose} severity={alertInfo.severity}>
                 {alertInfo.message}
             </Alert>
         </Snackbar>

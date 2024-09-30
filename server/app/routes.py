@@ -35,10 +35,7 @@ def base64_to_image(base64_str):
 async def facial_recognition(attendance_data: StudentImage):
     encoded_image = attendance_data.encoded_image
     # Convert base64 string to an image
-    print(attendance_data)
     input_image = base64_to_image(encoded_image.split(",")[1])  # Remove the header of base64
-    print('input image')
-    print(input_image)
     input_face_encodings = face_recognition.face_encodings(input_image)
 
     if len(input_face_encodings) == 0:
@@ -46,7 +43,6 @@ async def facial_recognition(attendance_data: StudentImage):
 
     # Check against each student in the database
     for student in student_collection.find():
-        print(student)
         # we have student["image"] is stored as a base64 string
         student_image = base64_to_image(student["image"].split(",")[1])
         known_face_encodings = face_recognition.face_encodings(student_image)
