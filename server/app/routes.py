@@ -47,7 +47,7 @@ async def facial_recognition(attendance_data: StudentImage):
         student_image = base64_to_image(student["image"].split(",")[1])
         known_face_encodings = face_recognition.face_encodings(student_image)
 
-        if face_recognition.compare_faces(known_face_encodings, input_face_encodings[0], tolerance=0.6):
+        if (face_recognition.compare_faces(known_face_encodings, input_face_encodings[0], tolerance=0.6) == [np.True_]):
             return {"message": "Attendance successful", "student_name": student["first_name"], "banner_id": student["banner_id"]}
 
     raise HTTPException(status_code=404, detail="Student not recognized")
