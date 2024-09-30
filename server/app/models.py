@@ -9,3 +9,6 @@ class Student(BaseModel):
     course_name: str
     university_name: str
     image: Optional[str] = Field(None, description="encoded image string")
+
+class StudentImage(BaseModel):
+    encoded_image: Optional[str] = Field(None, description="encoded image string")

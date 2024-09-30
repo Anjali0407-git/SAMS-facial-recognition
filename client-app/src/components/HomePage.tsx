@@ -8,7 +8,10 @@ const HomePage: React.FC = () => {
     <div>
         <Link to="/registerstudent">
           <button className="App-link">Register Student</button>
-        </Link>
+      </Link>
+      <Link to="/capture">
+          <button className="App-link">Capture Image</button>
+      </Link>
     </div>
   );
 };
