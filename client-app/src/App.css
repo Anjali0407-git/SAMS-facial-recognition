@@ -36,3 +36,339 @@
     transform: rotate(360deg);
   }
 }
+/*Login Register page*/
+/* General body styling */
+body {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Login/Register Container */
+.login-register-container {
+  max-width: 400px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: #2c2c2c;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Box shadow for form box */
+  position: relative; /* Relative positioning for active tab indicator */
+  border: 1px solid #444; /* Border for better distinction */
+}
+
+/* Tab buttons (Login/Register) */
+.tab-buttons {
+  display: flex;
+  margin-bottom: 2rem;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden; /* To prevent content spilling out of border-radius */
+}
+
+/* Active tab indicator */
+.tab-buttons::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 50%;
+  background-color: #4a90e2;
+  transition: transform 0.3s ease;
+}
+
+/* Apply this based on active class in your component */
+.tab-button.active ~ .tab-buttons::before {
+  transform: translateX(100%);
+}
+
+
+/* Individual tab buttons */
+.tab-button {
+  flex: 1;
+  padding: 1rem;
+  border: none;
+  background-color: #3c3c3c;
+  color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* Active tab button styling */
+.tab-button.active {
+  background-color: #4a90e2;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* Forms */
+.login-form,
+.register-form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Form header */
+h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-weight: normal;
+}
+
+/* Social buttons */
+.social-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Individual social button */
+.social-button {
+  background-color: transparent;
+  border: 1px solid #4c4c4c;
+  color: #ffffff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.social-button:hover {
+  background-color: #3c3c3c;
+}
+
+/* Divider text */
+.or-divider {
+  text-align: center;
+  margin: 1.5rem 0;
+  color: #888;
+}
+
+/* Input fields */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  background-color: #3c3c3c;
+  border: 1px solid #4c4c4c;
+  color: #ffffff;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+input::placeholder {
+  color: #8c8c8c;
+}
+
+/* Form options (Remember me, Terms, etc.) */
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.remember-me,
+.terms-agreement {
+  display: flex;
+  align-items: center;
+}
+
+input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.forgot-password {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+/* Submit button */
+.submit-button {
+  background-color: #4a90e2;
+  color: #ffffff;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #3a80d2;
+}
+
+/* Form switch link (between Login/Register) */
+.switch-form-link {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.switch-form-link a {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+.switch-form-link a:hover {
+  text-decoration: underline;
+}
+
+/*** Forgot Password Page ***/
+.form-container {
+  max-width: 400px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: #2c2c2c;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.form-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  text-align: center;
+  color: #ffffff;
+}
+
+form {
+  width: 100%;
+}
+
+form p {
+  margin-bottom: 1rem;
+}
+
+label {
+  color: #ffffff;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+input[type="email"],
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #3c3c3c;
+  border: 1px solid #4c4c4c;
+  color: #ffffff;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+input::placeholder {
+  color: #8c8c8c;
+}
+
+button.submit-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #4a90e2;
+  border: none;
+  color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+button.submit-btn:hover {
+  background-color: #3a80d2;
+}
+
+footer {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+footer p {
+  margin-bottom: 0.5rem;
+}
+
+footer a {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+.landing-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  background-color: #121212; /* Dark background */
+  color: #ffffff; /* Light text color */
+}
+
+.content-wrapper {
+  text-align: center;
+}
+
+.main-title {
+  font-size: 3rem; /* Large title */
+  margin-bottom: 20px;
+}
+
+.main-para {
+  font-size: 1.5rem; /* Medium paragraph size */
+  margin-bottom: 40px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.primary-button {
+  background-color: #4a90e2; /* Primary button color */
+  color: #ffffff; /* Button text color */
+  padding: 15px 30px; /* Button padding */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+.primary-button:hover {
+  background-color: #3a80d2; /* Darker shade on hover */
+}
+
+
+
+
+
+
+/* Ensure the body allows scrolling if content is taller than the viewport */
+body {
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
