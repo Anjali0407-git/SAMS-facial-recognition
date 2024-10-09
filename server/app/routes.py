@@ -60,11 +60,22 @@ async def facial_recognition(attendance_data: StudentImage):
 
 
 @student_router.get("/get_attendance_logs")
-async def get_attendance_logs(date: str, ):
+async def get_attendance_logs(date: Optional[str] = Query(None), id: Optional[str] = Query(None)):
     try:
-        log_date = datetime.strptime(date, "%Y-%m-%d")
+        query = {}
 
-        logs = attendance_collection.find({"timestamp": {"$gte": log_date, "$lt": log_date.replace(hour=23, minute=59, second=59)}})
+        # If a date is provided, filter logs by the specified date
+        if date:
+            log_date = datetime.strptime(date, "%Y-%m-%d")
+            query["timestamp"] = {"$gte": log_date, "$lt": log_date.replace(hour=23, minute=59, second=59)}
+
+        # If an ID is provided, filter logs by the student ID
+        if id:
+            query["student_id"] = {"$regex": id}
+
+        # Fetch logs based on the query (filtered by date, id, or both)
+        logs = attendance_collection.find(query)
+
         result = []
         for log in logs:
             student = student_collection.find_one({"banner_id": log['student_id']})
@@ -73,7 +84,7 @@ async def get_attendance_logs(date: str, ):
                     "student_name": student["first_name"],
                     "student_id": log["student_id"],
                     "timestamp": log["timestamp"]
-                })
+                })       
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -5,7 +5,8 @@ import { format } from 'date-fns';
 const Dashboard: React.FC = () => {
   const [attendanceLogs, setAttendanceLogs] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd')); // default to today's date
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedId, setSelectedID] = useState<string | null>(null);
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
@@ -13,7 +14,18 @@ const Dashboard: React.FC = () => {
   const fetchAttendanceLogs = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8000/get_attendance_logs?date=${selectedDate}`);
+      const queryParams = [];
+      if (selectedDate) {
+        queryParams.push(`date=${selectedDate}`);
+      }
+      if (selectedId) {
+        queryParams.push(`id=${selectedId}`);
+      }
+
+      const queryString = queryParams.length ? `?${queryParams.join('&')}` : '';
+
+      const response = await fetch(`http://localhost:8000/get_attendance_logs${queryString}`);
+
   
       if (response.ok) {
         const data = await response.json();
@@ -36,6 +48,10 @@ const Dashboard: React.FC = () => {
   // Handle date change
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedDate(event.target.value);
+  };
+
+  const handleIDChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedID(event.target.value);
   };
 
   // Trigger fetch when the component mounts or the date changes
@@ -65,6 +81,25 @@ const Dashboard: React.FC = () => {
         variant="outlined"
         sx={{ mb: 2 }}
       /></div>
+    <div className="id-filter">
+      <p>Enter Student ID:</p>
+      <TextField
+        type="text"
+        value={selectedId}
+        onChange={handleIDChange}
+        label="Student ID"
+        variant="outlined"
+        sx={{
+          mb: 2,
+          '& .MuiOutlinedInput-root': {
+            padding: '12px 14px', // Increase padding to make the input taller
+          },
+          '& input': {
+            height: '40px', // Optional: increase height for better control
+          },
+        }}
+      />
+    </div>
 
       <Button
         variant="contained"
