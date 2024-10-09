@@ -88,3 +88,39 @@ async def get_attendance_logs(date: Optional[str] = Query(None), id: Optional[st
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+# Utility to hash the password
+def hash_password(password: str):
+    return pwd_context.hash(password)
+
+# Utility to verify the password
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+@student_router.post("/signup")
+async def signup(student: Student):
+    # Check if student already exists
+    existing_student = student_collection.find_one({"banner_id": student.banner_id})
+    if existing_student:
+        raise HTTPException(status_code=400, detail="Student with this banner ID already exists")
+    
+    # Hash the password before storing it
+    hashed_password = hash_password(student.password)
+    student_data = student.dict()
+    student_data['password'] = hashed_password
+    
+    # Save to MongoDB
+    student_collection.insert_one(student_data)
+    return {"message": "Student registered successfully", "student_id": str(student_data["_id"])}
+
+@student_router.post("/login")
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = student_collection.find_one({"banner_id": form_data.username})
+    if not user or not verify_password(form_data.password, user['password']):
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    
+    # Create a token
+    token_expires = timedelta(minutes=60)
+    token = jwt.encode({"sub": user["banner_id"], "exp": datetime.utcnow() + token_expires}, "SECRET_KEY", algorithm="HS256")
+    
+    return {"access_token": token, "token_type": "bearer"}
