@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { FaFacebook, FaGoogle, FaTwitter, FaGithub } from 'react-icons/fa';
+
+import { Button, Snackbar, Alert, CircularProgress, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import '../styles/loginRegister.css'
 
 const LoginRegisterPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
   const navigate = useNavigate(); // Moved useNavigate to the top level of the component
+  
+  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,11 +32,16 @@ const LoginRegisterPage: React.FC = () => {
         localStorage.setItem('token', data.access_token); // Save token
         navigate('/home');
       } else {
+        setSnackbarSeverity('error');
+        setSnackbarMessage(data.detail || 'Failed to Login.');
         console.error('Login failed:', data.detail);
       }
     } catch (error) {
       console.error('Login error:', error);
     }
+  };
+  const handleCloseSnackbar = () => {
+    setSnackbarMessage(null);
   };
 
   const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -78,7 +88,13 @@ const LoginRegisterPage: React.FC = () => {
           REGISTER
         </button>
       </div>
-
+      {/* Snackbar for feedback */}
+      <Snackbar open={!!snackbarMessage} autoHideDuration={8000} onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       {activeTab === 'login' ? 
         <LoginForm setActiveTab={setActiveTab} onSubmit={handleLoginSubmit}/> : 
         <RegisterForm setActiveTab={setActiveTab} onSubmit={handleRegisterSubmit}/>
