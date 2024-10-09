@@ -6,6 +6,7 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import MuiAlert, { AlertColor, AlertProps } from '@mui/material/Alert';
+import Header from './Header';
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>((props, ref) => (
   <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -110,6 +111,8 @@ const RegisterStudent: React.FC = () => {
   };
 
     return (
+      <div>
+        <Header />
       <Box sx={{m: 6, p: 2}}><Typography variant="h3" gutterBottom>
       Register Student
     </Typography>
@@ -166,6 +169,7 @@ const RegisterStudent: React.FC = () => {
 
     </Box>
     </Box>
+    </div>
   );
 };
 

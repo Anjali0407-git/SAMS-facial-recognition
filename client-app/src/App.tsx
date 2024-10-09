@@ -9,6 +9,7 @@ import LandingPage from './components/LandingPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import WebcamComponent from './components/Webcam';
 import Dashboard from './components/Dashboard';
+import Header from './components/Header';
 
 function App() {
   return (
