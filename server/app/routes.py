@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, File, UploadFile, Form
+from fastapi import APIRouter, HTTPException, Depends, File, UploadFile, Form, Query
 from .models import Student, StudentImage, AttendanceLog
 from .database import student_collection, fs, attendance_collection
 from bson import ObjectId
@@ -57,3 +57,23 @@ async def facial_recognition(attendance_data: StudentImage):
             return {"message": "Attendance successful", "student_name": student["first_name"], "banner_id": student["banner_id"]}
 
     raise HTTPException(status_code=404, detail="Student not recognized")
+
+
+@student_router.get("/get_attendance_logs")
+async def get_attendance_logs(date: str, ):
+    try:
+        log_date = datetime.strptime(date, "%Y-%m-%d")
+
+        logs = attendance_collection.find({"timestamp": {"$gte": log_date, "$lt": log_date.replace(hour=23, minute=59, second=59)}})
+        result = []
+        for log in logs:
+            student = student_collection.find_one({"banner_id": log['student_id']})
+            if student:
+                result.append({
+                    "student_name": student["first_name"],
+                    "student_id": log["student_id"],
+                    "timestamp": log["timestamp"]
+                })
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
