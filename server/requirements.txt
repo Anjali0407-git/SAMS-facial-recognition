@@ -5,3 +5,6 @@ pymongo==4.0.2
 python-multipart==0.0.5
 starlette
 face_recognition
+passlib
+python-jose[cryptography]
+bcrypt

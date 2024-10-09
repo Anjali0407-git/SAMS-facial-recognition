@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, File, UploadFile, Form, Query
 from .models import Student, StudentImage, AttendanceLog
-from .database import student_collection, fs, attendance_collection
+from .database import student_collection, fs, attendance_collection, user_collection
 from bson import ObjectId
 from typing import Optional
 import base64  # Import base64 module for decoding
@@ -8,7 +8,9 @@ from PIL import Image  # Import from Pillow to handle image
 import io  # For handling byte streams
 import numpy as np  # Handling arrays
 import face_recognition
-from datetime import datetime
+from datetime import datetime, timedelta
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from .services import get_password_hash, verify_password, create_access_token
 
 student_router = APIRouter()
 
@@ -88,39 +90,36 @@ async def get_attendance_logs(date: Optional[str] = Query(None), id: Optional[st
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
-# Utility to hash the password
-def hash_password(password: str):
-    return pwd_context.hash(password)
 
-# Utility to verify the password
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
 
 @student_router.post("/signup")
-async def signup(student: Student):
-    # Check if student already exists
-    existing_student = student_collection.find_one({"banner_id": student.banner_id})
-    if existing_student:
-        raise HTTPException(status_code=400, detail="Student with this banner ID already exists")
-    
-    # Hash the password before storing it
-    hashed_password = hash_password(student.password)
-    student_data = student.dict()
-    student_data['password'] = hashed_password
-    
-    # Save to MongoDB
-    student_collection.insert_one(student_data)
-    return {"message": "Student registered successfully", "student_id": str(student_data["_id"])}
+async def signup(username: str = Form(...), email: str = Form(...), password: str = Form(...), name: str = Form(...)):
+    # Check if username or email already exists
+    if user_collection.find_one({"username": username}):
+        raise HTTPException(status_code=400, detail="Username already registered")
+    if user_collection.find_one({"email": email}):
+        raise HTTPException(status_code=400, detail="Email already registered")
 
-@student_router.post("/login")
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = student_collection.find_one({"banner_id": form_data.username})
-    if not user or not verify_password(form_data.password, user['password']):
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    # Hash the password and register new user
+    hashed_password = get_password_hash(password)
+    user_details = {"name": name, "username": username, "email": email, "hashed_password": hashed_password}
+    user_collection.insert_one(user_details)
+
+    return {"message": "User created successfully"}
+
+@student_router.post("/signin")
+async def signin(form_data: OAuth2PasswordRequestForm = Depends()):
+    # Attempt to retrieve user by username or email
+    user_dict = user_collection.find_one({"$or": [{"username": form_data.username}, {"email": form_data.username}]})
+    if not user_dict:
+        raise HTTPException(status_code=401, detail="Incorrect username/email or password")
     
-    # Create a token
-    token_expires = timedelta(minutes=60)
-    token = jwt.encode({"sub": user["banner_id"], "exp": datetime.utcnow() + token_expires}, "SECRET_KEY", algorithm="HS256")
+    # Verify password
+    if not verify_password(form_data.password, user_dict['hashed_password']):
+        raise HTTPException(status_code=401, detail="Incorrect password")
     
-    return {"access_token": token, "token_type": "bearer"}
+    # Create access token
+    access_token_expires = timedelta(minutes=30)
+    access_token = create_access_token(data={"sub": user_dict['username']}, expires_delta=access_token_expires)
+
+    return {"access_token": access_token, "token_type": "bearer"}

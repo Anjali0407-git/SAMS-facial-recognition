@@ -74,40 +74,6 @@
     font-weight: normal;
   }
   
-  /* Social buttons */
-  .social-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  /* Individual social button */
-  .social-button {
-    background-color: transparent;
-    border: 1px solid #4c4c4c;
-    color: #ffffff;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .social-button:hover {
-    background-color: #3c3c3c;
-  }
-  
-  /* Divider text */
-  .or-divider {
-    text-align: center;
-    margin: 1.5rem 0;
-    color: #888;
-  }
-  
   input::placeholder {
     color: #8c8c8c;
   }
