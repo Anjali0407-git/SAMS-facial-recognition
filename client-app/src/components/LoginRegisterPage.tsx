@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaFacebook, FaGoogle, FaTwitter, FaGithub } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import '../styles/loginRegister.css'
 
 const LoginRegisterPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
@@ -47,14 +48,14 @@ const LoginForm: React.FC<FormProps> = ({ setActiveTab }) => {
   
     return (
       <form className="login-form" onSubmit={handleLoginSubmit}>
-        <h2>Sign in with:</h2>
-        <div className="social-buttons">
+        {/* <h2>Sign in</h2> */}
+        {/* <div className="social-buttons">
           <button type="button" className="social-button"><FaFacebook /></button>
           <button type="button" className="social-button"><FaGoogle /></button>
           <button type="button" className="social-button"><FaTwitter /></button>
           <button type="button" className="social-button"><FaGithub /></button>
         </div>
-        <p className="or-divider">or:</p>
+        <p className="or-divider">or:</p> */}
         <input type="text" placeholder="Email or username" />
         <input type="password" placeholder="Password" />
         <div className="form-options">
@@ -75,14 +76,14 @@ const LoginForm: React.FC<FormProps> = ({ setActiveTab }) => {
 const RegisterForm: React.FC<FormProps> = ({ setActiveTab }) => {
   return (
     <form className="register-form">
-      <h2>Sign up with:</h2>
-      <div className="social-buttons">
+      {/* <h2>Sign up</h2> */}
+      {/* <div className="social-buttons">
         <button type="button" className="social-button"><FaFacebook /></button>
         <button type="button" className="social-button"><FaGoogle /></button>
         <button type="button" className="social-button"><FaTwitter /></button>
         <button type="button" className="social-button"><FaGithub /></button>
-      </div>
-      <p className="or-divider">or:</p>
+      </div> */}
+      {/* <p className="or-divider">or:</p> */}
       <input type="text" placeholder="Name" />
       <input type="text" placeholder="Username" />
       <input type="email" placeholder="Email" />
