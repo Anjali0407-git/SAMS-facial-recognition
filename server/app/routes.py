@@ -53,6 +53,7 @@ async def facial_recognition(attendance_data: StudentImage):
             attendance_logs['student_id'] = student["banner_id"]
             attendance_logs['timestamp'] = datetime.utcnow()
             print("attendance_logs", attendance_logs)
+            attendance_collection.insert_one(attendance_logs)
             return {"message": "Attendance successful", "student_name": student["first_name"], "banner_id": student["banner_id"]}
 
     raise HTTPException(status_code=404, detail="Student not recognized")
