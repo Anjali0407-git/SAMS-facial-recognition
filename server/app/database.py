@@ -6,4 +6,5 @@ client = MongoClient("mongodb://uav_user:uavPassword@localhost:27017/?authSource
 # client = MongoClient("mongodb://localhost:27017") # without any authentication
 db = client['student_db']
 student_collection = db['students']
+attendance_collection = db['attendancelog']
 fs = gridfs.GridFS(db)  # GridFS for file handling
