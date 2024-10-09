@@ -16,6 +16,9 @@ const HomePage: React.FC = () => {
           <Button color="inherit" component={RouterLink} to="/capture">
             Capture Image
           </Button>
+          <Button color="inherit" component={RouterLink} to="/dashboard">
+            Attendance Dashboard
+          </Button>
         </Toolbar>
       </AppBar>
       <Container maxWidth="sm">

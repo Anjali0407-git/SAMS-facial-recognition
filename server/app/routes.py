@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends, File, UploadFile, Form
-from .models import Student, StudentImage
-from .database import student_collection, fs
+from fastapi import APIRouter, HTTPException, Depends, File, UploadFile, Form, Query
+from .models import Student, StudentImage, AttendanceLog
+from .database import student_collection, fs, attendance_collection
 from bson import ObjectId
 from typing import Optional
 import base64  # Import base64 module for decoding
@@ -8,6 +8,7 @@ from PIL import Image  # Import from Pillow to handle image
 import io  # For handling byte streams
 import numpy as np  # Handling arrays
 import face_recognition
+from datetime import datetime
 
 student_router = APIRouter()
 
@@ -48,6 +49,42 @@ async def facial_recognition(attendance_data: StudentImage):
         known_face_encodings = face_recognition.face_encodings(student_image)
 
         if (face_recognition.compare_faces(known_face_encodings, input_face_encodings[0], tolerance=0.6) == [np.True_]):
+            attendance_logs = dict()
+            attendance_logs['student_id'] = student["banner_id"]
+            attendance_logs['timestamp'] = datetime.utcnow()
+            print("attendance_logs", attendance_logs)
+            attendance_collection.insert_one(attendance_logs)
             return {"message": "Attendance successful", "student_name": student["first_name"], "banner_id": student["banner_id"]}
 
     raise HTTPException(status_code=404, detail="Student not recognized")
+
+
+@student_router.get("/get_attendance_logs")
+async def get_attendance_logs(date: Optional[str] = Query(None), id: Optional[str] = Query(None)):
+    try:
+        query = {}
+
+        # If a date is provided, filter logs by the specified date
+        if date:
+            log_date = datetime.strptime(date, "%Y-%m-%d")
+            query["timestamp"] = {"$gte": log_date, "$lt": log_date.replace(hour=23, minute=59, second=59)}
+
+        # If an ID is provided, filter logs by the student ID
+        if id:
+            query["student_id"] = {"$regex": id}
+
+        # Fetch logs based on the query (filtered by date, id, or both)
+        logs = attendance_collection.find(query)
+
+        result = []
+        for log in logs:
+            student = student_collection.find_one({"banner_id": log['student_id']})
+            if student:
+                result.append({
+                    "student_name": student["first_name"],
+                    "student_id": log["student_id"],
+                    "timestamp": log["timestamp"]
+                })       
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
