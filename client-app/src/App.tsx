@@ -8,6 +8,7 @@ import LoginRegisterPage from './components/LoginRegisterPage';
 import LandingPage from './components/LandingPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import WebcamComponent from './components/Webcam';
+import Dashboard from './components/Dashboard';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/registerstudent" element={<RegisterStudent />} />
           <Route path="/loginregisterpage" element={<LoginRegisterPage />} />
           <Route path="/forgotpasswordpage" element={<ForgotPasswordPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/capture" element={<WebcamComponent />} />
         </Routes>
       </div>
