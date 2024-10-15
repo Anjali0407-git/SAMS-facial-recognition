@@ -1,5 +1,5 @@
-fastapi==0.78.0
-pydantic==1.10.7
+# fastapi==0.78.0
+# pydantic==1.10.7
 uvicorn==0.17.6
 pymongo==4.0.2
 python-multipart==0.0.5
@@ -8,9 +8,9 @@ face_recognition
 passlib
 python-jose[cryptography]
 bcrypt
-pytest 
-httpx 
-pytest-asyncio
+# pytest 
+# httpx 
+# pytest-asyncio
 
 fastapi==0.95.0
 pydantic==1.10.4
