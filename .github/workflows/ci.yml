@@ -26,6 +26,8 @@ jobs:
       run: |
         cd server  # Adjust this to your backend folder
         python -m pip install --upgrade pip
+        pip install setuptools
+        pip install git+https://github.com/ageitgey/face_recognition_models
         pip install -r requirements.txt
 
     - name: Run backend tests
