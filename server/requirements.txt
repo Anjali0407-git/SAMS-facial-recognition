@@ -8,3 +8,6 @@ face_recognition
 passlib
 python-jose[cryptography]
 bcrypt
+pytest 
+httpx 
+pytest-asyncio
