@@ -12,8 +12,8 @@ bcrypt
 # httpx 
 # pytest-asyncio
 
-fastapi==0.95.0
-pydantic==1.10.4
+fastapi==0.78.0
+pydantic==1.10.7
 # pytest==8.3.3
 # pytest-asyncio==0.20.0
 httpx==0.24.0
