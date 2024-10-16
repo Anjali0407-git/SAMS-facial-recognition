@@ -51,13 +51,13 @@ jobs:
 
     - name: Install frontend dependencies
       run: |
-        cd frontend  # Adjust to your frontend folder
+        cd client-app  # Adjust to your frontend folder
         npm install
         npm install @testing-library/react @testing-library/jest-dom jest react-router-dom
 
     - name: Run frontend tests
       run: |
-        cd frontend
+        cd client-app
         npm test  # Run Jest or other test suite
 
     - name: Build frontend
