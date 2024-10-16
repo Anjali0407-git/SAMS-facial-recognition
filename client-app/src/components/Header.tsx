@@ -19,6 +19,8 @@ const Header = () => {
           <Button color="inherit" component={RouterLink} to="/dashboard">
             Attendance Dashboard
           </Button>
+          <Button color="inherit" component={RouterLink} to="/loginregisterpage" style={{ position: 'absolute', right: 0, top: '10px' }}>
+          Logout</Button>
         </Toolbar>
       </AppBar>
     </header>
