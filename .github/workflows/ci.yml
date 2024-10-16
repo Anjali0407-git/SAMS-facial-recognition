@@ -72,5 +72,5 @@ jobs:
     # needs: [frontend-build]
 
     steps:
-    - name: Deploy to server (placeholder)
+    - name: Deploy to server
       run: echo "Deploying both frontend and backend..."  # Customize deployment process here
