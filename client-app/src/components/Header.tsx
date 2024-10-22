@@ -3,10 +3,11 @@ import React from 'react';
 
 import { Link as RouterLink } from 'react-router-dom';
 import { AppBar, Toolbar, Button, Typography, Container, Box } from '@mui/material';
+import '../styles/loginRegister.css'
 
 const Header = () => {
   return (
-    <header>
+    <header className='header-container'>
       <AppBar position="static">
         <Toolbar>
           <Button color="inherit" component={RouterLink} to="/home">Home</Button>
@@ -19,7 +20,7 @@ const Header = () => {
           <Button color="inherit" component={RouterLink} to="/dashboard">
             Attendance Dashboard
           </Button>
-          <Button color="inherit" component={RouterLink} to="/loginregisterpage" style={{ position: 'absolute', right: 0, top: '10px' }}>
+          <Button className = "logout" color="inherit" component={RouterLink} to="/loginregisterpage">
           Logout</Button>
         </Toolbar>
       </AppBar>
