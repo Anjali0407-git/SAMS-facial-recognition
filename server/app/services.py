@@ -16,7 +16,8 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 allowed_locations = [
     (34.0522, -118.2437),  # Los Angeles
     (38.640026, -90.249626) # westend
-    
+    # (38.6271354, -90.2338565), # Gratiot
+    # (38.6357103, -90.2317842) # Grand 
 ]
 
 # Hash password

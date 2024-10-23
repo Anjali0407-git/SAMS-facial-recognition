@@ -23,3 +23,4 @@ pytest-asyncio>=0.20.0
 requests
 python-dotenv
 geopy
+pymongo[srv]
