@@ -36,6 +36,13 @@ pip install <filename.whl>
 ## Update MongoDB URI
 - After successful installation, update the mongodb URI in [database.py](./app/database.py) file
 
+## Create .env file
+To securely manage your environment variables, create a `.env` file in the root directory of your project. Include the following lines to that file:
+
+```plaintext
+GOOGLE_API_KEY=your_google_api_key_here
+```
+
 ## Run application
 
 ```
