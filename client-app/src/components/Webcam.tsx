@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Webcam from "react-webcam";
 import { Button, Snackbar, Alert, CircularProgress, Box } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
@@ -14,7 +14,16 @@ const WebcamComponent: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+  const [location, setLocation] = useState({ latitude: 0, longitude: 0 });
 
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      console.log('position', position)
+      setLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+    })
+          
+  }, []);
+  
   const capture = useCallback(async () => {
     if (webcamRef.current) {
       const imageSrc = webcamRef.current.getScreenshot();
@@ -28,7 +37,7 @@ const WebcamComponent: React.FC = () => {
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ encoded_image: imageSrc }),
+            body: JSON.stringify({ encoded_image: imageSrc, latitude: location.latitude, longitude: location.longitude }),
           });
 
           // Parse JSON response
@@ -49,7 +58,7 @@ const WebcamComponent: React.FC = () => {
         }
       }
     }
-  }, []);
+  }, [location]);
 
   const handleCloseSnackbar = () => {
     setSnackbarMessage(null);

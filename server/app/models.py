@@ -18,3 +18,5 @@ class AttendanceLog(BaseModel):
 
 class StudentImage(BaseModel):
     encoded_image: Optional[str] = Field(None, description="encoded image string")
+    latitude: float
+    longitude: float

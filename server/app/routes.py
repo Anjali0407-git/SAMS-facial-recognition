@@ -10,7 +10,7 @@ import numpy as np  # Handling arrays
 import face_recognition
 from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from .services import get_password_hash, verify_password, create_access_token
+from .services import get_password_hash, verify_password, create_access_token, is_within_allowed_area
 
 student_router = APIRouter()
 
@@ -36,6 +36,9 @@ def base64_to_image(base64_str):
 
 @student_router.post("/facial_recognition")
 async def facial_recognition(attendance_data: StudentImage):
+    if not is_within_allowed_area(attendance_data.latitude, attendance_data.longitude):
+        raise HTTPException(status_code=403, detail="Attendance marked from an unauthorized location.")
+    
     encoded_image = attendance_data.encoded_image
     # Convert base64 string to an image
     input_image = base64_to_image(encoded_image.split(",")[1])  # Remove the header of base64
