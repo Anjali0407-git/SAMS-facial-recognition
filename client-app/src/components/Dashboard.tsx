@@ -120,6 +120,7 @@ const Dashboard: React.FC = () => {
               <TableCell>Student Name</TableCell>
               <TableCell>Banner ID</TableCell>
               <TableCell>Time of Login</TableCell>
+              <TableCell>Location</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -129,6 +130,7 @@ const Dashboard: React.FC = () => {
                   <TableCell>{log.student_name}</TableCell>
                   <TableCell>{log.student_id}</TableCell>
                   <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
+                  <TableCell>{log.location_label}</TableCell>
                 </TableRow>
               ))
             ) : (
