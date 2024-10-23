@@ -18,6 +18,12 @@ const LoginRegisterPage: React.FC = () => {
     const bannerId = formData.get('bannerId') as string;
     const password = formData.get('password') as string;
 
+    if (!bannerId || !password) {
+      setSnackbarSeverity('error');
+      setSnackbarMessage('Please enter both bannerId and password.');
+      return;
+    }
+
     try {
       const response = await fetch('http://localhost:8000/signin', {
         method: 'POST',
@@ -30,6 +36,7 @@ const LoginRegisterPage: React.FC = () => {
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem('token', data.access_token); // Save token
+        localStorage.setItem('bannerId', bannerId); // Save bannerId for future use
         navigate('/home');
       } else {
         setSnackbarSeverity('error');
@@ -51,6 +58,12 @@ const LoginRegisterPage: React.FC = () => {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
     const name = formData.get('name') as string;
+
+    if (!bannerId || !email || !password || !name) {
+      setSnackbarSeverity('error');
+      setSnackbarMessage('Please fill all the fields.');
+      return;
+    }
 
     try {
       const response = await fetch('http://localhost:8000/signup', {
