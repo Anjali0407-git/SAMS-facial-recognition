@@ -7,7 +7,7 @@ const LandingPage = () => {
       <div className="content-wrapper">
         <h1 className="main-title">SAMS</h1> 
         <p className="main-para">
-        Welcome to Smart Attendace Management System
+        Welcome to Smart Attendance Management System
         </p>
         <div className="buttons">
           <Link to="/loginregisterpage">

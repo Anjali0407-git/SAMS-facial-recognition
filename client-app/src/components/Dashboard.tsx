@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableHead, TableBody, TableCell, TableContainer, TableRow, Paper, TextField, Button, CircularProgress, Snackbar, Alert } from '@mui/material';
 import { format } from 'date-fns';
-
+import Header from './Header';
+import '../styles/loginRegister.css'
 const Dashboard: React.FC = () => {
   const [attendanceLogs, setAttendanceLogs] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -64,8 +65,9 @@ const Dashboard: React.FC = () => {
     setSnackbarMessage(null);
   };
 
-  return (
-    <div>
+  return (<div><Header />
+    
+    <div className='dashboard-container'>
       <h2>Attendance Dashboard</h2>
 
       {/* Date input */}
@@ -92,10 +94,10 @@ const Dashboard: React.FC = () => {
         sx={{
           mb: 2,
           '& .MuiOutlinedInput-root': {
-            padding: '12px 14px', // Increase padding to make the input taller
+            padding: '4px 4px', // Increase padding to make the input taller
           },
           '& input': {
-            height: '40px', // Optional: increase height for better control
+            height: '10px', // Optional: increase height for better control
           },
         }}
       />
@@ -147,6 +149,7 @@ const Dashboard: React.FC = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+    </div>
     </div>
   );
 };

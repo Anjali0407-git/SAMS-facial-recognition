@@ -96,16 +96,16 @@ async def get_attendance_logs(date: Optional[str] = Query(None), id: Optional[st
 
 
 @student_router.post("/signup")
-async def signup(username: str = Form(...), email: str = Form(...), password: str = Form(...), name: str = Form(...)):
+async def signup(bannerId: str = Form(...), email: str = Form(...), password: str = Form(...), name: str = Form(...)):
     # Check if username or email already exists
-    if user_collection.find_one({"username": username}):
-        raise HTTPException(status_code=400, detail="Username already registered")
+    if user_collection.find_one({"bannerId": bannerId}):
+        raise HTTPException(status_code=400, detail="bannerId already registered")
     if user_collection.find_one({"email": email}):
         raise HTTPException(status_code=400, detail="Email already registered")
 
     # Hash the password and register new user
     hashed_password = get_password_hash(password)
-    user_details = {"name": name, "username": username, "email": email, "hashed_password": hashed_password}
+    user_details = {"name": name, "bannerId": bannerId, "email": email, "hashed_password": hashed_password}
     user_collection.insert_one(user_details)
 
     return {"message": "User created successfully"}
@@ -113,9 +113,9 @@ async def signup(username: str = Form(...), email: str = Form(...), password: st
 @student_router.post("/signin")
 async def signin(form_data: OAuth2PasswordRequestForm = Depends()):
     # Attempt to retrieve user by username or email
-    user_dict = user_collection.find_one({"$or": [{"username": form_data.username}, {"email": form_data.username}]})
+    user_dict = user_collection.find_one({"$or": [{"bannerId": form_data.username}, {"email": form_data.username}]})
     if not user_dict:
-        raise HTTPException(status_code=401, detail="Incorrect username/email or password")
+        raise HTTPException(status_code=401, detail="Incorrect bannerId/email or password")
     
     # Verify password
     if not verify_password(form_data.password, user_dict['hashed_password']):
@@ -123,6 +123,6 @@ async def signin(form_data: OAuth2PasswordRequestForm = Depends()):
     
     # Create access token
     access_token_expires = timedelta(minutes=30)
-    access_token = create_access_token(data={"sub": user_dict['username']}, expires_delta=access_token_expires)
+    access_token = create_access_token(data={"sub": user_dict['bannerId']}, expires_delta=access_token_expires)
 
     return {"access_token": access_token, "token_type": "bearer"}

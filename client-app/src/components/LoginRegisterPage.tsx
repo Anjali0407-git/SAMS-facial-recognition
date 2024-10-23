@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
 import { FaFacebook, FaGoogle, FaTwitter, FaGithub } from 'react-icons/fa';
+
+import { Button, Snackbar, Alert, CircularProgress, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import '../styles/loginRegister.css'
 
 const LoginRegisterPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
   const navigate = useNavigate(); // Moved useNavigate to the top level of the component
+  
+  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const username = formData.get('username') as string;
+    const bannerId = formData.get('bannerId') as string;
     const password = formData.get('password') as string;
 
     try {
@@ -19,7 +24,7 @@ const LoginRegisterPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: new URLSearchParams({ username, password })
+        body: new URLSearchParams({ username: bannerId, password })
       });
 
       const data = await response.json();
@@ -27,17 +32,22 @@ const LoginRegisterPage: React.FC = () => {
         localStorage.setItem('token', data.access_token); // Save token
         navigate('/home');
       } else {
+        setSnackbarSeverity('error');
+        setSnackbarMessage(data.detail || 'Failed to Login.');
         console.error('Login failed:', data.detail);
       }
     } catch (error) {
       console.error('Login error:', error);
     }
   };
+  const handleCloseSnackbar = () => {
+    setSnackbarMessage(null);
+  };
 
   const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const username = formData.get('username') as string;
+    const bannerId = formData.get('bannerId') as string;
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
     const name = formData.get('name') as string;
@@ -48,7 +58,7 @@ const LoginRegisterPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: new URLSearchParams({ username, email, password, name })
+        body: new URLSearchParams({ bannerId, email, password, name })
       });
 
       const data = await response.json();
@@ -78,7 +88,13 @@ const LoginRegisterPage: React.FC = () => {
           REGISTER
         </button>
       </div>
-
+      {/* Snackbar for feedback */}
+      <Snackbar open={!!snackbarMessage} autoHideDuration={8000} onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       {activeTab === 'login' ? 
         <LoginForm setActiveTab={setActiveTab} onSubmit={handleLoginSubmit}/> : 
         <RegisterForm setActiveTab={setActiveTab} onSubmit={handleRegisterSubmit}/>
@@ -95,7 +111,7 @@ interface FormProps {
 const LoginForm: React.FC<FormProps> = ({ setActiveTab, onSubmit }) => {
     return (
       <form className="login-form" onSubmit={onSubmit}>
-        <input name="username" type="text" placeholder="Email or username" />
+        <input name="bannerId" type="text" placeholder="Email or bannerId" />
         <input name="password" type="password" placeholder="Password" />
         <div className="form-options">
           <label className="remember-me">
@@ -116,7 +132,7 @@ const RegisterForm: React.FC<FormProps> = ({ setActiveTab, onSubmit }) => {
   return (
     <form className="register-form" onSubmit={onSubmit}>
       <input name="name" type="text" placeholder="Name" />
-      <input name="username" type="text" placeholder="Username" />
+      <input name="bannerId" type="text" placeholder="bannerId" />
       <input name="email" type="email" placeholder="Email" />
       <input name="password" type="password" placeholder="Password" />
       <input name="passwordRepeat" type="password" placeholder="Repeat password" />

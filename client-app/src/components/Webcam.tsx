@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Webcam from "react-webcam";
 import { Button, Snackbar, Alert, CircularProgress, Box } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import Header from './Header';
 
 const videoConstraints = {
   width: 1280,
@@ -65,6 +66,8 @@ const WebcamComponent: React.FC = () => {
   };
 
   return (
+    <div>
+      <Header/>
     <Box textAlign="center" sx={{ mt: 2 }}>
       <Webcam
         audio={false}
@@ -95,6 +98,7 @@ const WebcamComponent: React.FC = () => {
         </Alert>
       </Snackbar>
     </Box>
+    </div>
   );
 };
 
