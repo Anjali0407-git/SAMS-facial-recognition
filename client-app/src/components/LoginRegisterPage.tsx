@@ -19,7 +19,7 @@ const LoginRegisterPage: React.FC = () => {
     const password = formData.get('password') as string;
 
     try {
-      const response = await fetch('http://localhost:8000/signin', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -53,7 +53,7 @@ const LoginRegisterPage: React.FC = () => {
     const name = formData.get('name') as string;
 
     try {
-      const response = await fetch('http://localhost:8000/signup', {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

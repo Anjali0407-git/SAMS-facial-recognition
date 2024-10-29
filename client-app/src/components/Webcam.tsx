@@ -33,7 +33,7 @@ const WebcamComponent: React.FC = () => {
           setLoading(true);
 
           // Send the request to your backend
-          const response = await fetch('http://localhost:8000/facial_recognition', {
+          const response = await fetch(`${process.env.REACT_APP_SERVER_URL}facial_recognition`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
