@@ -25,8 +25,7 @@ const Dashboard: React.FC = () => {
 
       const queryString = queryParams.length ? `?${queryParams.join('&')}` : '';
 
-      const response = await fetch(`http://localhost:8000/get_attendance_logs${queryString}`);
-
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}get_attendance_logs${queryString}`);
   
       if (response.ok) {
         const data = await response.json();

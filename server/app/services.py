@@ -35,7 +35,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, "SECRET_KEY", algorithm="HS256")
 
-def is_within_allowed_area(lat, lon, allowed_locations=allowed_locations, max_distance=0.1):  # max_distance in kilometers
+def is_within_allowed_area(lat, lon, allowed_locations=allowed_locations, max_distance=100):  # max_distance in kilometers
     current_location = (lat, lon)
     print('current location', current_location)
     for location in allowed_locations:
