@@ -1,6 +1,15 @@
-## Available Scripts
+# Dev setup
 
-In the project directory, you can run:
+## Create .env file
+To securely manage your environment variables, create a `.env` file in the root directory of your project. Include the following lines to that file:
+
+```plaintext
+# for production
+# REACT_APP_SERVER_URL="https://sams-server-fa5ebe9e71ef.herokuapp.com/"
+# for development
+REACT_APP_SERVER_URL="http://localhost:8000/"
+
+```
 
 ### `npm start`
 
