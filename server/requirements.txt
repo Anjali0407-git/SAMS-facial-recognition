@@ -24,3 +24,4 @@ requests
 python-dotenv
 geopy
 pymongo[srv]
+certifi

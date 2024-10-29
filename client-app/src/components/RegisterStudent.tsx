@@ -80,6 +80,7 @@ const RegisterStudent: React.FC = () => {
       console.log('preparing data to launch', student)
       // Send the request to your backend
       const response = await fetch('http://localhost:8000/register_student', {
+      // const response = await fetch('https://sams-server-fa5ebe9e71ef.herokuapp.com/register_student', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
