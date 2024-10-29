@@ -1,6 +1,5 @@
 from pymongo import MongoClient
 import gridfs
-import certifi
 import os
 from dotenv import load_dotenv
 
@@ -8,10 +7,6 @@ load_dotenv()
 
 # MongoDB setup
 mongodb_uri = os.getenv('MONGODB_URI')
-# if os.getenv('MODE') == 'prod':
-#     client = MongoClient(mongodb_uri, 
-#                     tlsCAFile=certifi.where())
-# else:
 client = MongoClient(mongodb_uri)
 
 db = client['student_db']

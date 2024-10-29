@@ -42,11 +42,8 @@ To securely manage your environment variables, create a `.env` file in the root 
 ```plaintext
 GOOGLE_API_KEY=your_google_api_key_here
 
-# use prod for production
-MODE="dev"
-
 # production
-# MONGODB_URI=your-mongodb-uri
+# MONGODB_URI=your_mongodb_uri
 # development
 # MONGODB_URI="mongodb://uav_user:uavPassword@localhost:27017/?authSource=admin"
 MONGODB_URI="mongodb://localhost:27017"  # development
