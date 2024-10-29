@@ -46,7 +46,7 @@ GOOGLE_API_KEY=your_google_api_key_here
 # MONGODB_URI=your_mongodb_uri
 # development
 # MONGODB_URI="mongodb://uav_user:uavPassword@localhost:27017/?authSource=admin"
-MONGODB_URI="mongodb://localhost:27017"  # development
+MONGODB_URI="mongodb://localhost:27017"
 
 ```
 
