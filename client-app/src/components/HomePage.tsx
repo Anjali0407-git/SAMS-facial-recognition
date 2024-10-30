@@ -1,42 +1,80 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Container, Box, TableContainer, Paper,  Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import {
+  Typography,
+  Container,
+  Box,
+  Grid,
+  Paper,
+  TextField,
+  IconButton,
+  Snackbar,
+  Modal,
+  LinearProgress,
+  CircularProgress,
+  Fade,
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell
+} from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import CloseIcon from '@mui/icons-material/Close';
 import Header from './Header';
 
 interface CourseResponse {
   first_name: string;
   courses: string[];
-  university_name?: string | null;  // Make this field optional and allow nulls
+  university_name?: string | null;
+}
+
+interface AttendanceRecord {
+  student_name: string;
+  student_id: string;
+  timestamp: string;
+  location_label: string;
 }
 
 const HomePage: React.FC = () => {
   const [courses, setCourses] = useState<string[]>([]);
-  const [universityName, setUniversityName] = useState<string>('');  // universityName is a string
+  const [universityName, setUniversityName] = useState<string>('');
   const [studentName, setStudentName] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
+  const [attendanceModalOpen, setAttendanceModalOpen] = useState(false);
+  const [attendanceLoading, setAttendanceLoading] = useState(false);
+  const [attendanceHistory, setAttendanceHistory] = useState<AttendanceRecord[]>([]);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'info' as 'error' | 'info' | 'success' | 'warning'
+  });
 
-  // Assuming bannerId is stored in localStorage after login
-  const bannerId: string | null = localStorage.getItem('bannerId');
+  const bannerId = localStorage.getItem('bannerId');
 
   useEffect(() => {
     const fetchCourses = async () => {
       if (!bannerId) {
-        console.log('No bannerId found in localStorage');
+        setSnackbar({
+          open: true,
+          message: 'No banner ID found. Please log in again.',
+          severity: 'error'
+        });
+        setLoading(false);
         return;
       }
 
-      console.log(`Making API request with bannerId: ${bannerId}`);
       try {
         const response = await fetch(`http://localhost:8000/get_student_courses?bannerId=${bannerId}`);
-        
-        console.log('API request made, waiting for response...');
         
         if (!response.ok) {
           throw new Error('Failed to fetch courses');
         }
 
         const data: CourseResponse = await response.json();
-        console.log('Received data:', data);
-
-        // Ensure university_name is a string, provide a fallback if it's null or undefined
         setUniversityName(data.university_name || 'Unknown University');
         setCourses(data.courses);
         setStudentName(data.first_name);
@@ -99,16 +137,14 @@ const HomePage: React.FC = () => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric',
-      timeZone: 'America/Chicago',
+      day: 'numeric'
     });
   };
 
   const formatTime = (dateString: string) => {
     return new Date(dateString).toLocaleTimeString('en-US', {
       hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'America/Chicago',
+      minute: '2-digit'
     });
   };
 
@@ -127,41 +163,206 @@ const HomePage: React.FC = () => {
   return (
     <div>
       <Header />
-      <Container maxWidth="sm">
-        <Box textAlign="center" mt={4}>
-          <Typography variant="h4" gutterBottom>
-            Welcome to Smart Attendance Management System, {studentName}!
+      <Container maxWidth="lg">
+        <Box sx={{ mt: 4, mb: 6 }}>
+          <Typography variant="h4" align="center" gutterBottom>
+            Welcome to Smart Attendance Management System
           </Typography>
+          <Typography variant="h5" align="center" color="primary" gutterBottom>
+            Hello, {studentName}!
+          </Typography>
+          <Typography variant="subtitle1" align="center" color="text.secondary" gutterBottom>
+            {universityName}
+          </Typography>
+        </Box>
 
-          {courses.length > 0 ? (
-            <Box mt={4}>
-              <Typography variant="h6" gutterBottom>
-                Registered Courses at {universityName}:
-              </Typography>
-
-              <TableContainer component={Paper} sx={{ mt: 3 }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Course Name:</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {courses.map((course, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{course}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              </TableContainer>
+        {courses.length > 0 ? (
+          <Box>
+            <Box sx={{ display: 'flex', mb: 3 }}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Search courses..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <IconButton size="small" edge="start">
+                      <SearchIcon />
+                    </IconButton>
+                  ),
+                }}
+              />
             </Box>
-          ) : (
-            <Typography variant="body2" mt={2}>
+
+            <Grid container spacing={3}>
+              {filteredCourses.map((course, index) => {
+                const [courseCode, ...courseNameParts] = course.split(' ');
+                const courseName = courseNameParts.join(' ');
+                
+                return (
+                  <Grid item xs={12} sm={6} md={4} key={index}>
+                    <Paper
+                      elevation={3}
+                      sx={{
+                        p: 3,
+                        height: '100%',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease-in-out',
+                        '&:hover': {
+                          transform: 'translateY(-4px)',
+                          boxShadow: 6,
+                        },
+                        display: 'flex',
+                        flexDirection: 'column',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        borderRadius: 2,
+                      }}
+                      onClick={() => handleCourseClick(course)}
+                    >
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          height: '4px',
+                          background: (theme) => theme.palette.primary.main,
+                        }}
+                      />
+                      <Box sx={{ mb: 2 }}>
+                        <Typography
+                          variant="h6"
+                          color="primary"
+                          sx={{ fontWeight: 'bold', mb: 1 }}
+                        >
+                          {courseCode}
+                        </Typography>
+                        <Typography variant="body1" color="text.secondary">
+                          {courseName}
+                        </Typography>
+                      </Box>
+                      <Box
+                        sx={{
+                          mt: 'auto',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                        }}
+                      >
+                        <CalendarMonthIcon color="action" fontSize="small" />
+                        <Typography variant="body2" color="text.secondary">
+                          View Attendance History
+                        </Typography>
+                      </Box>
+                    </Paper>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </Box>
+        ) : (
+          <Paper sx={{ p: 3, textAlign: 'center' }} elevation={2}>
+            <Typography variant="body1" color="text.secondary">
               No courses registered yet.
             </Typography>
-          )}
-        </Box>
+          </Paper>
+        )}
+
+        <Modal
+          open={attendanceModalOpen}
+          onClose={() => setAttendanceModalOpen(false)}
+          closeAfterTransition
+        >
+          <Fade in={attendanceModalOpen}>
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '90%',
+                maxWidth: 700,
+                bgcolor: 'background.paper',
+                borderRadius: 2,
+                boxShadow: 24,
+                p: 4,
+                maxHeight: '90vh',
+                overflow: 'auto',
+              }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                <Typography variant="h6" component="h2">
+                  {selectedCourse} - Attendance History
+                </Typography>
+                <IconButton onClick={() => setAttendanceModalOpen(false)} size="small">
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+
+              {attendanceLoading ? (
+                <Box sx={{ width: '100%', mt: 2 }}>
+                  <LinearProgress />
+                </Box>
+              ) : (
+                <>
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Overall Attendance Rate
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Box sx={{ flexGrow: 1 }}>
+                        <LinearProgress
+                          variant="determinate"
+                          value={calculateAttendanceRate()}
+                          sx={{ height: 10, borderRadius: 5 }}
+                        />
+                      </Box>
+                      <Typography variant="body2" color="text.secondary">
+                        {calculateAttendanceRate().toFixed(1)}%
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  {attendanceHistory.length > 0 ? (
+                    <TableContainer>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Date</TableCell>
+                            <TableCell>Time</TableCell>
+                            <TableCell>Location</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {attendanceHistory.map((record, index) => (
+                            <TableRow key={index}>
+                              <TableCell>{formatDate(record.timestamp)}</TableCell>
+                              <TableCell>{formatTime(record.timestamp)}</TableCell>
+                              <TableCell>{record.location_label}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  ) : (
+                    <Typography variant="body2" color="text.secondary" align="center">
+                      No attendance records found.
+                    </Typography>
+                  )}
+                </>
+              )}
+            </Box>
+          </Fade>
+        </Modal>
+
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={6000}
+          onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+          message={snackbar.message}
+        />
       </Container>
     </div>
   );
