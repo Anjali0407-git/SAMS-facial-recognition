@@ -54,23 +54,3 @@ def get_location_label(lat, lng):
             if results:
                 return results[0].get('formatted_address')  # Return the full address as label
         return "Unknown location"
-
-def is_within_allowed_area(lat, lon, allowed_locations=allowed_locations, max_distance=100):  # max_distance in kilometers
-    current_location = (lat, lon)
-    print('current location', current_location)
-    for location in allowed_locations:
-        distance = geodesic(current_location, location).kilometers
-        if distance <= max_distance:
-            return True
-    return False
-
-def get_location_label(lat, lng):
-        api_key = os.getenv('GOOGLE_API_KEY')
-        base_url = "https://maps.googleapis.com/maps/api/geocode/json"
-        endpoint = f"{base_url}?latlng={lat},{lng}&key={api_key}"
-        response = requests.get(endpoint)
-        if response.status_code == 200:
-            results = response.json().get('results')
-            if results:
-                return results[0].get('formatted_address')  # Return the full address as label
-        return "Unknown location"

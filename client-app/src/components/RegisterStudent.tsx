@@ -75,13 +75,7 @@ const RegisterStudent: React.FC = () => {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-
-    if (!student.image) {
-      setAlertInfo({ severity: 'error', message: 'Image upload is mandatory!' });
-      setOpen(true);
-      return;
-    }
-    
+  
     try {
       console.log('preparing data to launch', student)
       // Send the request to your backend

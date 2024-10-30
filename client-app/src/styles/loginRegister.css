@@ -379,11 +379,3 @@
     font-size: 1.5rem;
     margin-top: 2rem;
   }
-
-.header-container{
- .logout{
-  position: absolute;
-  right: 0;
-  top: 10px;
- }
-}
