@@ -36,7 +36,9 @@ const LoginRegisterPage: React.FC = () => {
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem('token', data.access_token); // Save token
-        localStorage.setItem('bannerId', bannerId); // Save bannerId for future use
+        localStorage.setItem('bannerId', bannerId); // Save bannerId
+        setSnackbarSeverity('success');
+        setSnackbarMessage('Login successful!');
         navigate('/home');
       } else {
         setSnackbarSeverity('error');

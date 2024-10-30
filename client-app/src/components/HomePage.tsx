@@ -42,11 +42,87 @@ const HomePage: React.FC = () => {
         setStudentName(data.first_name);
       } catch (error) {
         console.error('Error fetching courses:', error);
+        setSnackbar({
+          open: true,
+          message: 'Failed to load courses. Register to courses/Please try again later.',
+          severity: 'error'
+        });
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchCourses();
   }, [bannerId]);
+
+  const fetchAttendanceHistory = async (studentId: string) => {
+    try {
+      const response = await fetch(`http://localhost:8000/get_attendance_logs?id=${studentId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch attendance history');
+      }
+      const data: AttendanceRecord[] = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching attendance history:', error);
+      throw error;
+    }
+  };
+
+  const handleCourseClick = async (course: string) => {
+    setSelectedCourse(course);
+    setAttendanceModalOpen(true);
+    setAttendanceLoading(true);
+    
+    try {
+      if (bannerId) {
+        const attendanceData = await fetchAttendanceHistory(bannerId);
+        setAttendanceHistory(attendanceData);
+      }
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: 'Failed to load attendance history',
+        severity: 'error'
+      });
+    } finally {
+      setAttendanceLoading(false);
+    }
+  };
+
+  const calculateAttendanceRate = () => {
+    if (attendanceHistory.length === 0) return 0;
+    return (attendanceHistory.length / 30) * 100; // Assuming 30 days as total classes
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      timeZone: 'America/Chicago',
+    });
+  };
+
+  const formatTime = (dateString: string) => {
+    return new Date(dateString).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'America/Chicago',
+    });
+  };
+
+  const filteredCourses = courses.filter(course =>
+    course.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <div>

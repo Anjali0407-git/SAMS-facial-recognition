@@ -10,13 +10,12 @@ import numpy as np  # Handling arrays
 import face_recognition
 from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from .services import get_password_hash, verify_password, create_access_token
+from .services import get_password_hash, verify_password, create_access_token, is_within_allowed_area, get_location_label
 
 student_router = APIRouter()
 
 @student_router.post("/register_student")
 async def register_student(student: Student):
-    print(student)
     existing_student = student_collection.find_one({"banner_id": student.banner_id})
     if existing_student:
         raise HTTPException(status_code=400, detail="Student with this banner ID already exists")
@@ -36,6 +35,9 @@ def base64_to_image(base64_str):
 
 @student_router.post("/facial_recognition")
 async def facial_recognition(attendance_data: StudentImage):
+    if not is_within_allowed_area(attendance_data.latitude, attendance_data.longitude):
+        raise HTTPException(status_code=403, detail="Attendance marked from an unauthorized location.")
+    
     encoded_image = attendance_data.encoded_image
     # Convert base64 string to an image
     input_image = base64_to_image(encoded_image.split(",")[1])  # Remove the header of base64
@@ -51,9 +53,14 @@ async def facial_recognition(attendance_data: StudentImage):
         known_face_encodings = face_recognition.face_encodings(student_image)
 
         if (face_recognition.compare_faces(known_face_encodings, input_face_encodings[0], tolerance=0.6) == [np.True_]):
+            # Reverse Geocoding to get the location label
+            location_label = get_location_label(attendance_data.latitude, attendance_data.longitude)
             attendance_logs = dict()
             attendance_logs['student_id'] = student["banner_id"]
             attendance_logs['timestamp'] = datetime.utcnow()
+            attendance_logs['location_label'] = location_label
+            attendance_logs['latitude'] = attendance_data.latitude
+            attendance_logs['longitude'] = attendance_data.longitude
             print("attendance_logs", attendance_logs)
             attendance_collection.insert_one(attendance_logs)
             return {"message": "Attendance successful", "student_name": student["first_name"], "banner_id": student["banner_id"]}
@@ -85,7 +92,8 @@ async def get_attendance_logs(date: Optional[str] = Query(None), id: Optional[st
                 result.append({
                     "student_name": student["first_name"],
                     "student_id": log["student_id"],
-                    "timestamp": log["timestamp"]
+                    "timestamp": log["timestamp"],
+                    "location_label": log["location_label"]
                 })       
         return result
     except Exception as e:
