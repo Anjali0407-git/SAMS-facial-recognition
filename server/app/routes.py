@@ -131,3 +131,23 @@ async def signin(form_data: OAuth2PasswordRequestForm = Depends()):
     access_token = create_access_token(data={"sub": user_dict['bannerId']}, expires_delta=access_token_expires)
 
     return {"access_token": access_token, "token_type": "bearer"}
+
+@student_router.get("/get_student_courses")
+async def get_student_courses(bannerId: str):
+    try:
+        # Find the student by their banner_id
+        student = student_collection.find_one({"banner_id": bannerId})
+        if not student:
+            raise HTTPException(status_code=404, detail="Student not found")
+
+        # Fetch course_name and university_name from the document
+        courses = [student.get("course_name", "No course registered")]
+        university_name = student.get("university_name", "No university information")
+
+        return {
+            "first_name": student["first_name"],
+            "courses": courses,  # Returning the course as a list for consistency
+            "university_name": university_name
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
