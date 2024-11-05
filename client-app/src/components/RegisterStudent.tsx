@@ -20,7 +20,9 @@ const RegisterStudent: React.FC = () => {
     courseName: '',
     universityName: '',
     image: null as File | null,
-    imageStr: ''
+    imageStr: '',
+    student_email: '',
+    student_password: ''
   });
     const [open, setOpen] = useState(false);
     type SeverityType = AlertColor | undefined;
@@ -76,6 +78,12 @@ const RegisterStudent: React.FC = () => {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
   
+    if (!student.firstName || !student.lastName || !student.bannerId || !student.courseName || !student.universityName || !student.image || !student.student_email || !student.student_password) {
+      setAlertInfo({ severity: 'error', message: 'All fields are mandatory. Please fill out each field.' });
+      setOpen(true);
+      return;
+    }
+
     try {
       console.log('preparing data to launch', student)
       // Send the request to your backend
@@ -91,7 +99,9 @@ const RegisterStudent: React.FC = () => {
           banner_id: student.bannerId,
           course_name: student.courseName,
           university_name: student.universityName,
-          image: student.imageStr
+          image: student.imageStr,
+          student_email: student.student_email,
+          student_password: student.student_password
         }),
       });
   
@@ -120,16 +130,22 @@ const RegisterStudent: React.FC = () => {
       
       <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField label="First Name" variant="outlined" name="firstName" value={student.firstName} onChange={handleInputChange} fullWidth sx={{ maxWidth: '25vw' }} />
+          <TextField label="First Name" variant="outlined" name="firstName" value={student.firstName} onChange={handleInputChange} fullWidth sx={{ maxWidth: '25vw' }} required />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField label="Last Name" variant="outlined" name="lastName" value={student.lastName} onChange={handleInputChange} fullWidth sx={{ maxWidth: '25vw' }} />
+          <TextField label="Last Name" variant="outlined" name="lastName" value={student.lastName} onChange={handleInputChange} fullWidth sx={{ maxWidth: '25vw' }} required />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField label="Banner ID" variant="outlined" name="bannerId" value={student.bannerId} onChange={handleInputChange} fullWidth sx={{ maxWidth: '25vw' }}/>
+          <TextField label="Email" variant="outlined" name="student_email" value={student.student_email} onChange={handleInputChange} fullWidth sx={{ maxWidth: '25vw' }} required />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <FormControl fullWidth sx={{ maxWidth: '25vw' }}>
+          <TextField label="Password" type="password" variant="outlined" name="student_password" value={student.student_password} onChange={handleInputChange} fullWidth sx={{ maxWidth: '25vw' }} required />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <TextField label="Banner ID" variant="outlined" name="bannerId" value={student.bannerId} onChange={handleInputChange} fullWidth sx={{ maxWidth: '25vw' }} required/>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <FormControl fullWidth sx={{ maxWidth: '25vw' }} required>
             <InputLabel>Course Name</InputLabel>
             <Select name="courseName" value={student.courseName} label="Course Name" onChange={handleSelectChange}>
               <MenuItem value="Course 1">Course 1</MenuItem>
@@ -138,7 +154,7 @@ const RegisterStudent: React.FC = () => {
           </FormControl>
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <FormControl fullWidth sx={{ maxWidth: '25vw' }}>
+          <FormControl fullWidth sx={{ maxWidth: '25vw' }} required>
             <InputLabel>University Name</InputLabel>
             <Select name="universityName" value={student.universityName} onChange={handleSelectChange}>
               <MenuItem value="University 1">University 1</MenuItem>
