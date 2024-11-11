@@ -17,6 +17,7 @@ const LoginRegisterPage: React.FC = () => {
     const formData = new FormData(e.currentTarget);
     const bannerId = formData.get('bannerId') as string;
     const password = formData.get('password') as string;
+    const role = "admin";
 
     try {
       const response = await fetch(`${process.env.REACT_APP_SERVER_URL}signin`, {
@@ -30,6 +31,7 @@ const LoginRegisterPage: React.FC = () => {
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem('token', data.access_token); // Save token
+        localStorage.setItem('role', data.role);
         navigate('/home');
       } else {
         setSnackbarSeverity('error');
@@ -51,6 +53,7 @@ const LoginRegisterPage: React.FC = () => {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
     const name = formData.get('name') as string;
+    const role = "admin";
 
     try {
       const response = await fetch(`${process.env.REACT_APP_SERVER_URL}signup`, {
@@ -58,7 +61,7 @@ const LoginRegisterPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: new URLSearchParams({ bannerId, email, password, name })
+        body: new URLSearchParams({ bannerId, email, password, name, role })
       });
 
       const data = await response.json();

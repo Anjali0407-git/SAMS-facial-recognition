@@ -22,8 +22,15 @@ async def register_student(student: Student):
 
     student_data = student.dict()
     student_data["image"] = str(student.image)
-
     student_collection.insert_one(student_data)
+
+    await signup(
+        bannerId=student.banner_id,
+        email=student.student_email,
+        password=student.student_password,
+        name=f"{student.first_name} {student.last_name}",
+        role="student"
+    )
 
     return {"message": "Student registered successfully", "student_id": str(student_data["_id"])}
 
@@ -101,7 +108,7 @@ async def get_attendance_logs(date: Optional[str] = Query(None), id: Optional[st
 
 
 @student_router.post("/signup")
-async def signup(bannerId: str = Form(...), email: str = Form(...), password: str = Form(...), name: str = Form(...)):
+async def signup(bannerId: str = Form(...), email: str = Form(...), password: str = Form(...), name: str = Form(...), role: str = Form(...)):
     # Check if username or email already exists
     if user_collection.find_one({"bannerId": bannerId}):
         raise HTTPException(status_code=400, detail="bannerId already registered")
@@ -110,7 +117,8 @@ async def signup(bannerId: str = Form(...), email: str = Form(...), password: st
 
     # Hash the password and register new user
     hashed_password = get_password_hash(password)
-    user_details = {"name": name, "bannerId": bannerId, "email": email, "hashed_password": hashed_password}
+    user_role = role or "admin"
+    user_details = {"name": name, "bannerId": bannerId, "email": email, "hashed_password": hashed_password, "role": user_role}
     user_collection.insert_one(user_details)
 
     return {"message": "User created successfully"}
@@ -130,4 +138,4 @@ async def signin(form_data: OAuth2PasswordRequestForm = Depends()):
     access_token_expires = timedelta(minutes=30)
     access_token = create_access_token(data={"sub": user_dict['bannerId']}, expires_delta=access_token_expires)
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "role": user_dict['role']}

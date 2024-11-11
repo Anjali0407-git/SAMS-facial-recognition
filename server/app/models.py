@@ -10,6 +10,8 @@ class Student(BaseModel):
     course_name: str
     university_name: str
     image: Optional[str] = Field(None, description="encoded image string")
+    student_email: str
+    student_password: str
 
 
 class AttendanceLog(BaseModel):
