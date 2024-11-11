@@ -32,6 +32,7 @@ const LoginRegisterPage: React.FC = () => {
       if (response.ok) {
         localStorage.setItem('token', data.access_token); // Save token
         localStorage.setItem('role', data.role);
+        localStorage.setItem('bannerId', bannerId);
         navigate('/home');
       } else {
         setSnackbarSeverity('error');

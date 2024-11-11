@@ -6,6 +6,7 @@ const Header = () => {
   const role = localStorage.getItem('role'); // Retrieve role from local storage
 
   const handleLogout = () => {
+    localStorage.removeItem('bannerId');
     localStorage.removeItem('token');
     localStorage.removeItem('role');
   };
