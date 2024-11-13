@@ -67,7 +67,7 @@ const Dashboard: React.FC = () => {
   return (<div><Header />
     
     <div className='dashboard-container'>
-      <h2>Attendance Dashboard</h2>
+      <h2>Attendance Logs</h2>
 
       {/* Date input */}
       <div className="date-filter">
