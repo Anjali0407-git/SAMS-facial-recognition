@@ -68,7 +68,7 @@ const HomePage: React.FC = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:8000/get_student_courses?bannerId=${bannerId}`);
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}get_student_courses?bannerId=${bannerId}`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch courses');
@@ -95,7 +95,7 @@ const HomePage: React.FC = () => {
 
   const fetchAttendanceHistory = async (studentId: string) => {
     try {
-      const response = await fetch(`http://localhost:8000/get_attendance_logs?id=${studentId}`);
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}get_attendance_logs?id=${studentId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch attendance history');
       }
