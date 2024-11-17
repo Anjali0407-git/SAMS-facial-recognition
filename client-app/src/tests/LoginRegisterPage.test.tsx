@@ -26,7 +26,7 @@ describe('LoginRegisterPage', () => {
 
     it('switches to the registration form when the register button is clicked', async () => {
         const registerButtons = screen.getAllByRole('button', { name: /register/i });
-        userEvent.click(registerButtons[0]); // Adjust index based on actual UI
+        userEvent.click(registerButtons[0]);
         const nameInput = await screen.findByPlaceholderText('Name'); // Use findBy to wait for the input to appear
         expect(nameInput).toBeInTheDocument();
     });

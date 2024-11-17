@@ -37,10 +37,12 @@ const LoginRegisterPage: React.FC = () => {
       } else {
         setSnackbarSeverity('error');
         setSnackbarMessage(data.detail || 'Failed to Login.');
-        console.error('Login failed:', data.detail);
+        // console.error('Login failed:', data.detail);
       }
     } catch (error) {
-      console.error('Login error:', error);
+      setSnackbarSeverity('error');
+      setSnackbarMessage('Login error');
+      // console.error('Login error:', error);
     }
   };
   const handleCloseSnackbar = () => {
