@@ -37,7 +37,7 @@ const Dashboard: React.FC = () => {
         setSnackbarMessage('Failed to fetch attendance logs.');
       }
     } catch (error) {
-      console.error('Error fetching attendance logs:', error);
+      // console.error('Error fetching attendance logs:', error);
       setSnackbarSeverity('error');
       setSnackbarMessage('An error occurred while fetching logs.');
     } finally {
